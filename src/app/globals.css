@@ -2,20 +2,42 @@
 @tailwind components;
 @tailwind utilities;
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
+th, td {
+  border: 1px solid #ccc;
+  text-align: left;
+  padding: 8px;
 }
+.loader {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(255, 255, 255, 0.7);
+  display: inline-block;
+  justify-content: center;
+  align-items: center;
+  z-index: 9999;
+  border-bottom-color: transparent ;
+  animation: rotation 1s linear infinite;
+box-sizing: border-box;
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+}
+@keyframes rotation {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
   }
 }
-
-body {
-  color: var(--foreground);
-  background: var(--background);
-  font-family: Arial, Helvetica, sans-serif;
+html, body {
+  scroll-behavior: smooth;
 }
+html {
+@apply text-sm
+@appy bg-white
+@appy dark:bg-black
+@appy dark:text-white
+@appy scroll-smoothgit checkout <new-branch-name>}
+

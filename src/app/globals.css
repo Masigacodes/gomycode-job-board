@@ -34,10 +34,6 @@ box-sizing: border-box;
 html, body {
   scroll-behavior: smooth;
 }
-html {
-@apply text-sm
-@appy bg-white
-@appy dark:bg-black
-@appy dark:text-white
-@appy scroll-smoothgit checkout <new-branch-name>}
 
+
+ 

@@ -5,7 +5,7 @@ import Link from 'next/link';
 import axios from 'axios';
 
 interface Job {
-  id: number;
+  _id: string;
   title: string;
   company: string;
   location: string;
@@ -26,6 +26,7 @@ function JobsForDisabledPeople() {
   useEffect(() => {
     axios.get('/api/jobs/disabled')
       .then(response => {
+        console.log(response.data);
         setJobs(response.data);
         setLoading(false);
       })
@@ -90,15 +91,15 @@ function JobsForDisabledPeople() {
       </form>
       <ul>
         {filteredJobs.map(job => (
-          <li key={job.id}>
-            <Link href={`/jobs/${job.id}`}>
-              <a>
+          <li key={job._id}>
+            <Link href={`/jobs/${job._id}`}>
+              
                 <h2>{job.title}</h2>
                 <p>Company: {job.company}</p>
                 <p>Location: {job.location}</p>
                 <p>Job Type: {job.jobType}</p>
                 <p>Disability Friendly: {job.disabilityFriendly ? 'Yes' : 'No'}</p>
-              </a>
+              
             </Link>
           </li>
         ))}

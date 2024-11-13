@@ -31,7 +31,8 @@ export const sendEmail = async (to: string, subject: string, html: string) => {
     const res = await transporter.sendMail(mailOptions);
     console.log(res)
     // console.log('Email sent successfully');
-  } catch (error: any) {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  } catch (error: { message: string } | any) {
     // Log detailed error message for debugging
     console.error('Error sending email:', error);
 

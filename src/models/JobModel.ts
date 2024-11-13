@@ -1,4 +1,4 @@
-import mongoose, { Document, Schema, Model, model, models } from "mongoose";
+import  { Document, Schema, Model, model, models } from "mongoose";
 
 // Define the TypeScript interface for Job
 export interface IJob extends Document {

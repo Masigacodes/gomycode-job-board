@@ -71,7 +71,7 @@ export function Footer() {
 
       {/* Copyright Section */}
       <div className="bg-gray-700 py-4 mt-8 text-center">
-        <p>&copy; 2023 Job Board. All rights reserved.</p>
+        <p>&copy; {new Date().getFullYear()} Job Board. All rights reserved.</p>
       </div>
     </footer>
   )

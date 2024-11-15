@@ -3,10 +3,10 @@ import Link from 'next/link';
 
 const Navbar = () => {
   return (
-    <nav className="bg-white shadow-md p-4">
+    <nav className="bg-gradient-to-r from-blue-500 via-purple-500 to-blue-500 p-4 shadow-lg">
       <div className="container mx-auto flex justify-between items-center">
         {/* Logo */}
-        <div className="text-xl font-bold text-blue-500">
+        <div className="text-2xl font-extrabold text-white tracking-wide">
           <Link href="/">
             JobBoard
           </Link>
@@ -14,29 +14,26 @@ const Navbar = () => {
         
         {/* Navigation Links */}
         <div className="hidden md:flex space-x-6">
-          <Link href="/jobs" className="text-gray-700 hover:text-blue-500">
-            Jobs
-          </Link>
-          <Link href="/companies" className="text-gray-700 hover:text-blue-500">
-            Companies
-          </Link>
-          <Link href="/about" className="text-gray-700 hover:text-blue-500">
-            About Us
-          </Link>
-          <Link href="/contact" className="text-gray-700 hover:text-blue-500">
-            Contact
-          </Link>
+          {["Jobs", "Companies", "About Us", "Contact"].map((item, index) => (
+            <Link 
+              key={index} 
+              href={`/${item.toLowerCase().replace(" ", "")}`}
+              className="text-white font-medium hover:text-yellow-300 transition duration-200"
+            >
+              {item}
+            </Link>
+          ))}
         </div>
         
         {/* Authentication Buttons */}
         <div className="space-x-4">
           <Link href="/login">
-            <button className="px-4 py-2 text-blue-500 border border-blue-500 rounded-md hover:bg-blue-500 hover:text-white transition">
+            <button className="px-4 py-2 text-blue-500 bg-white font-semibold border border-blue-500 rounded-md hover:bg-blue-500 hover:text-white transition">
               Login
             </button>
           </Link>
           <Link href="/signup">
-            <button className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition">
+            <button className="px-4 py-2 bg-yellow-400 text-blue-900 font-semibold rounded-md hover:bg-yellow-500 hover:text-white transition">
               Signup
             </button>
           </Link>

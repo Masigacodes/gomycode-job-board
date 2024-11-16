@@ -17,7 +17,7 @@ const Navbar = () => {
           {["Jobs", "Companies", "About Us", "Contact"].map((item, index) => (
             <Link 
               key={index} 
-              href={`/${item.toLowerCase().replace(" ", "")}`}
+              href={`/${item.split(" ")[0].toLowerCase().replace(" ", "")}`}
               className="text-white font-medium hover:text-yellow-300 transition duration-200"
             >
               {item}

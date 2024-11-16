@@ -1,14 +1,16 @@
-import  { Document, Schema, Model, model, models } from "mongoose";
+import   { Document, Schema, Model, model, models } from "mongoose";
+import { ICompany } from "./CompanyModel";
 
 // Define the TypeScript interface for Job
 export interface IJob extends Document {
   title: string;
-  company: string;
-  location: string;
-  jobType: string;
-  disabilityFriendly: boolean; 
-  createdAt: Date;
-  updatedAt: Date;
+  company?: string | ICompany;
+  location?: string;
+  jobType?: string;
+  disabilityFriendly?: boolean;
+  description: string; 
+  createdAt?: Date;
+  updatedAt?: Date;
 }
 
 // Define the Mongoose schema for Job
@@ -20,7 +22,8 @@ const JobSchema: Schema<IJob> = new Schema(
       trim: true,
     },
     company: {
-      type: String,
+      type: Schema.Types.ObjectId,
+      ref: "Company",
       required: true,
       
       lowercase: true,

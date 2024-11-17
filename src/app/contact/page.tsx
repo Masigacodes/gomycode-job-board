@@ -33,49 +33,66 @@ export default function Contact() {
   };
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen p-4 bg-gray-50 text-gray-800">
-      <h1 className="text-3xl font-bold text-center text-gray-900 mb-6">Contact Us</h1>
+    <div className="flex flex-col items-center justify-center min-h-screen bg-gradient-to-br from-blue-100 to-blue-300 p-6">
+      {/* Header */}
+      <div className="text-center">
+        <h1 className="text-4xl font-extrabold text-blue-900 mb-4 animate-fadeIn">
+          Contact Us
+        </h1>
+        <p className="text-lg text-gray-800 mb-6 animate-fadeIn delay-100">
+          Have questions or feedback? We&apos;re here to help! Reach out to us, and we will get back to you promptly.
+        </p>
+      </div>
 
-      <p className="text-lg text-center mb-6">
-        We’d love to hear from you! Whether you have questions, feedback, or inquiries, feel free to reach out.
-      </p>
-
-      <form onSubmit={handleSubmit} className="w-full max-w-md bg-white p-6 rounded-lg shadow-md">
+      {/* Contact Form */}
+      <form
+        onSubmit={handleSubmit}
+        className="w-full max-w-lg bg-white p-8 rounded-lg shadow-lg border-t-4 border-blue-500 animate-slideIn"
+      >
         <div className="mb-4">
-          <label htmlFor="name" className="block text-sm font-medium text-gray-700">Full Name</label>
+          <label htmlFor="name" className="block text-sm font-medium text-gray-700">
+            Full Name
+          </label>
           <input
             type="text"
             id="name"
             name="name"
             value={formData.name}
             onChange={handleChange}
-            className="mt-2 w-full p-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500"
+            className="mt-2 w-full p-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:outline-none transition-shadow"
+            placeholder="Enter your full name"
             required
           />
         </div>
 
         <div className="mb-4">
-          <label htmlFor="email" className="block text-sm font-medium text-gray-700">Email Address</label>
+          <label htmlFor="email" className="block text-sm font-medium text-gray-700">
+            Email Address
+          </label>
           <input
             type="email"
             id="email"
             name="email"
             value={formData.email}
             onChange={handleChange}
-            className="mt-2 w-full p-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500"
+            className="mt-2 w-full p-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:outline-none transition-shadow"
+            placeholder="Enter your email address"
             required
           />
         </div>
 
         <div className="mb-6">
-          <label htmlFor="message" className="block text-sm font-medium text-gray-700">Your Message</label>
+          <label htmlFor="message" className="block text-sm font-medium text-gray-700">
+            Your Message
+          </label>
           <textarea
             id="message"
             name="message"
             value={formData.message}
             onChange={handleChange}
-            rows={4}
-            className="mt-2 w-full p-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500"
+            rows={5}
+            className="mt-2 w-full p-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:outline-none transition-shadow"
+            placeholder="Write your message here"
             required
           />
         </div>
@@ -84,7 +101,7 @@ export default function Contact() {
           <button
             type="submit"
             disabled={isSubmitting}
-            className={`w-full py-3 px-6 bg-blue-600 text-white font-semibold rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 ${
+            className={`w-full py-3 px-6 bg-blue-600 text-white font-bold rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all ${
               isSubmitting ? 'bg-blue-400 cursor-not-allowed' : ''
             }`}
           >
@@ -102,6 +119,19 @@ export default function Contact() {
           </div>
         )}
       </form>
+
+      {/* Additional Content */}
+      <div className="mt-8 text-center text-gray-700">
+        <p className="text-lg">
+          <strong>Email:</strong> ashleymasiga17@gmail.com
+        </p>
+        <p className="text-lg">
+          <strong>Phone:</strong> +1 (555) 123-4567
+        </p>
+        <p className="text-lg">
+          <strong>Address:</strong> 1234 Inclusive Lane, Accessibility City, AB 56789
+        </p>
+      </div>
     </div>
   );
 }

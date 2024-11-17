@@ -40,7 +40,7 @@ export default function Contact() {
           Contact Us
         </h1>
         <p className="text-lg text-gray-800 mb-6 animate-fadeIn delay-100">
-          Have questions or feedback? We're here to help! Reach out to us, and we'll get back to you promptly.
+          Have questions or feedback? We&apos;re here to help! Reach out to us, and we will get back to you promptly.
         </p>
       </div>
 

@@ -44,7 +44,7 @@ const HeroSection: React.FC = () => {
                 Why JobBoard for People with Disabilities?
               </h2>
               <p className="text-gray-600 mt-2">
-                We believe that inclusion and diversity drive innovation. That’s why we partner with organizations that are committed to building accessible and inclusive workplaces. 
+                We believe that inclusion and diversity drive innovation. That&apos;s why we partner with organizations that are committed to building accessible and inclusive workplaces.
               </p>
             </div>
           </div>
@@ -89,13 +89,13 @@ const HeroSection: React.FC = () => {
           <div className="mt-8 flex flex-col lg:flex-row justify-center gap-8">
             <div className="bg-white p-6 rounded-lg shadow-md max-w-md">
               <p className="text-gray-600">
-                "Thanks to JobBoard, I found a company that values my skills and provides accommodations that empower me to succeed."
+                &quot;Thanks to JobBoard, I found a company that values my skills and provides accommodations that empower me to succeed.&quot;
               </p>
               <p className="text-blue-500 font-semibold mt-4">- Jane Doe</p>
             </div>
             <div className="bg-white p-6 rounded-lg shadow-md max-w-md">
               <p className="text-gray-600">
-                "The training resources and support gave me the confidence to transition into a new career path."
+                &quot;The training resources and support gave me the confidence to transition into a new career path.&quot;
               </p>
               <p className="text-blue-500 font-semibold mt-4">- John Smith</p>
             </div>

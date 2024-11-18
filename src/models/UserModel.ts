@@ -8,6 +8,8 @@ export interface IUser extends Document {
   role?: string; // Optional field, could be 'user', 'admin', etc.
   createdAt: Date;
   updatedAt: Date;
+  image?: string;
+  _id: string
 }
 
 // Define the Mongoose schema for User

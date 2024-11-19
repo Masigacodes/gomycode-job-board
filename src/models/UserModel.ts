@@ -1,3 +1,4 @@
+import { compare, hash } from "bcryptjs";
 import { Document, Schema, Model, model, models } from "mongoose";
 
 // Define the TypeScript interface for User
@@ -49,7 +50,7 @@ const UserSchema: Schema<IUser> = new Schema(
 UserSchema.pre<IUser>("save", async function (next) {
   if (!this.isModified("password")) return next(); // Only hash if password is modified
   try {
-    const hashedPassword = await crypto.hash(this.password, 10); // Hash the password with salt
+    const hashedPassword = await hash(this.password, 10); // Hash the password with salt
     this.password = hashedPassword; // Save the hashed password
     next();
   } catch (err) {
@@ -59,7 +60,7 @@ UserSchema.pre<IUser>("save", async function (next) {
 
 // Compare password function (for login)
 UserSchema.methods.comparePassword = async function (enteredPassword: string) {
-  return await crypto.compare(enteredPassword, this.password); // Compare the entered password with the hashed one
+  return await compare(enteredPassword, this.password); // Compare the entered password with the hashed one
 };
 
 // Create and export the User model

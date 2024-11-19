@@ -1,3 +1,5 @@
+import Link from "next/link";
+
 const AdminLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
     return (
       <div className="flex min-h-screen">
@@ -7,13 +9,13 @@ const AdminLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
           <nav>
             <ul>
               <li className="px-4 py-2 hover:bg-gray-700">
-                <a href="/admin/dashboard">Dashboard</a>
+                <Link href="/dashboard">Dashboard</Link>
               </li>
               <li className="px-4 py-2 hover:bg-gray-700">
-                <a href="/admin/jobs">Manage Jobs</a>
+                <Link href="/dashboard/jobs">Manage Jobs</Link>
               </li>
               <li className="px-4 py-2 hover:bg-gray-700">
-                <a href="/admin/users">Manage Users</a>
+                <Link href="/dashboard/users">Manage Users</Link>
               </li>
             </ul>
           </nav>

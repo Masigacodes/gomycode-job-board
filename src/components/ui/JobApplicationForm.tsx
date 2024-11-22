@@ -1,4 +1,4 @@
-"use client"; // Ensure this is at the top
+"use client"; 
 
 import React, { useState } from 'react';
 
@@ -37,7 +37,10 @@ const JobApplicationForm: React.FC = () => {
     return Object.keys(newErrors).length === 0;
   };
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+  // Type the event more specifically for different input types
+  const handleChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
+  ) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
@@ -48,7 +51,6 @@ const JobApplicationForm: React.FC = () => {
   };
 
   const handleSkillsChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    // Ensure correct type handling for the input
     const skillsArray = e.target.value.split(',').map(skill => skill.trim());
     setFormData({ ...formData, skills: skillsArray });
   };
@@ -57,7 +59,7 @@ const JobApplicationForm: React.FC = () => {
     e.preventDefault();
     if (validate()) {
       console.log('Form submitted', formData);
-      // Add API call here
+      
     }
   };
 
@@ -121,7 +123,7 @@ const JobApplicationForm: React.FC = () => {
                 id="availability"
                 name="availability"
                 value={formData.availability}
-                onChange={handleChange}
+                onChange={handleChange}  
                 className="mt-2 w-full p-3 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500"
               >
                 <option value="">Select Availability</option>
@@ -163,7 +165,7 @@ const JobApplicationForm: React.FC = () => {
               id="skills"
               name="skills"
               value={formData.skills.join(', ')}
-              onChange={handleSkillsChange} // Fixed event type
+              onChange={handleSkillsChange}
               className="mt-2 w-full p-3 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500"
               placeholder="Enter skills separated by commas"
             />

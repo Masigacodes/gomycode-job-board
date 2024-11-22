@@ -3,18 +3,13 @@
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import axios from 'axios';
+import { ICompany } from '@/models/CompanyModel';
+import { IJob } from '@/models/JobModel';
 
-interface Job {
-  _id: string;
-  title: string;
-  company: string;
-  location: string;
-  jobType: string;
-  disabilityFriendly: boolean;
-}
+
 
 function JobsForDisabledPeople() {
-  const [jobs, setJobs] = useState<Job[]>([]);
+  const [jobs, setJobs] = useState<IJob[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [filters, setFilters] = useState({
@@ -38,7 +33,16 @@ function JobsForDisabledPeople() {
       { _id: '11', title: 'UX/UI Designer', company: 'Remote Co.', location: 'Remote', jobType: 'Full-time', disabilityFriendly: true },
       { _id: '12', title: 'Project Manager', company: 'Global Solutions', location: 'Remote', jobType: 'Contract', disabilityFriendly: true },
     ];
-    setJobs(fetchedJobs);
+    setLoading(true);
+    // setJobs(fetchedJobs);
+    //fetching data from api
+    axios.get('/api/jobs/disabled')
+      .then((response) => {
+        setJobs(response.data);
+      })
+      .catch((error) => {
+        setError(error.message);
+      })
     setLoading(false);
   }, []);
 
@@ -132,7 +136,7 @@ function JobsForDisabledPeople() {
         <ul className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
           {filteredJobs.map((job) => (
             <li
-              key={job._id}
+              key={job._id as string}
               className="p-6 border border-transparent rounded-lg shadow-lg hover:shadow-2xl transition-shadow bg-black bg-opacity-50 backdrop-blur-lg"
             >
               <Link href={`/jobs/${job._id}`}>
@@ -141,7 +145,7 @@ function JobsForDisabledPeople() {
                     {job.title}
                   </h2>
                   <p className="text-gray-200">
-                    <span className="font-semibold">Company:</span> {job.company}
+                    <span className="font-semibold">Company:</span> {(job.company as ICompany).name}
                   </p>
                   <p className="text-gray-200">
                     <span className="font-semibold">Location:</span> {job.location}

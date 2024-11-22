@@ -7,7 +7,7 @@ import { NextRequest, NextResponse } from "next/server";
 export async function GET(req: NextRequest) {
   try {
     await dbConnect();
-    const fetchedJobs = await JobModel.find({}).populate("company");
+    const fetchedJobs = await JobModel.find({});
     const data = await getCompaniesWithJobs2();
     console.log({data});
     return NextResponse.json(fetchedJobs);

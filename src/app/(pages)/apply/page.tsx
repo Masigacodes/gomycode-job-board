@@ -23,11 +23,38 @@ const JobApplicationForm: React.FC = () => {
 
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
 
-  // Handle form submission
-  const handleSubmit = (e: React.FormEvent) => {
+  // Updated handleSubmit function
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    console.log("Form submitted for job:", jobId);
-    console.log(formData);
+
+    // Create a FormData object to handle file upload
+    const data = new FormData();
+    data.append("fullName", formData.fullName);
+    data.append("email", formData.email);
+    data.append("phone", formData.phone);
+    data.append("resume", formData.resume as File); // Add file
+    data.append("coverLetter", formData.coverLetter);
+    data.append("skills", JSON.stringify(formData.skills)); // Convert array to string
+    data.append("availability", formData.availability);
+    data.append("accessibilityRequirements", formData.accessibilityRequirements);
+
+    try {
+      const response = await fetch("/api/job/apply", {
+        method: "POST",
+        body: data,
+      });
+
+      if (response.ok) {
+        alert("Application submitted successfully!");
+        router.push("/thank-you"); // Redirect to a thank-you page
+      } else {
+        const errorData = await response.json();
+        alert(`Failed to submit application: ${errorData.message}`);
+      }
+    } catch (error) {
+      console.error("Error submitting application:", error);
+      alert("An unexpected error occurred. Please try again.");
+    }
   };
 
   // Handle skills input change
@@ -143,7 +170,7 @@ const JobApplicationForm: React.FC = () => {
           <label
             htmlFor="coverLetter"
             className="block text-sm font-semibold text-gray-700"
-            >
+          >
             Cover Letter
           </label>
           <textarea

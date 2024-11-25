@@ -1,4 +1,4 @@
-"use client"; 
+"use client";
 
 import React, { useState } from 'react';
 
@@ -26,40 +26,78 @@ const JobApplicationForm: React.FC = () => {
   });
 
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
+  // Validation function
   const validate = (): boolean => {
     const newErrors: { [key: string]: string } = {};
     if (!formData.fullName) newErrors.fullName = 'Full Name is required';
     if (!formData.email) newErrors.email = 'Email is required';
     if (!formData.phone) newErrors.phone = 'Phone number is required';
     if (!formData.resume) newErrors.resume = 'Please upload your resume';
+    if (!formData.availability) newErrors.availability = 'Availability is required';
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
 
-  // Type the event more specifically for different input types
+  // Handle changes for text inputs and selects
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
   ) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
+  // Handle resume file change
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files) {
       setFormData({ ...formData, resume: e.target.files[0] });
     }
   };
 
+  // Handle skills input change (convert comma-separated list to array)
   const handleSkillsChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const skillsArray = e.target.value.split(',').map(skill => skill.trim());
     setFormData({ ...formData, skills: skillsArray });
   };
 
+  // Simulate form submission
+  const submitApplication = async (data: FormData) => {
+    setIsSubmitting(true);
+    try {
+      // Simulate API call
+      const formDataObj = new FormData();
+      formDataObj.append('fullName', data.fullName);
+      formDataObj.append('email', data.email);
+      formDataObj.append('phone', data.phone);
+      formDataObj.append('resume', data.resume!);
+      formDataObj.append('coverLetter', data.coverLetter);
+      formDataObj.append('skills', data.skills.join(', '));
+      formDataObj.append('availability', data.availability);
+      formDataObj.append('accessibilityRequirements', data.accessibilityRequirements);
+
+      // You can replace this with your actual API call
+      const response = await fetch('/api/apply', {
+        method: 'POST',
+        body: formDataObj,
+      });
+
+      if (response.ok) {
+        alert('Application submitted successfully');
+      } else {
+        alert('Failed to submit application');
+      }
+    } catch (error) {
+      console.error('Error submitting application:', error);
+      alert('Something went wrong. Please try again later.');
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (validate()) {
-      console.log('Form submitted', formData);
-      
+      submitApplication(formData);
     }
   };
 
@@ -131,6 +169,7 @@ const JobApplicationForm: React.FC = () => {
                 <option value="1-2 weeks">1-2 weeks</option>
                 <option value="1 month">1 month</option>
               </select>
+              {errors.availability && <p className="text-red-500 text-sm mt-2">{errors.availability}</p>}
             </div>
           </div>
 
@@ -186,8 +225,9 @@ const JobApplicationForm: React.FC = () => {
           <button
             type="submit"
             className="w-full bg-indigo-600 text-white py-3 px-6 rounded-md hover:bg-indigo-700 focus:ring focus:ring-indigo-500 focus:ring-opacity-50"
+            disabled={isSubmitting}
           >
-            Submit Application
+            {isSubmitting ? 'Submitting...' : 'Submit Application'}
           </button>
         </form>
       </div>

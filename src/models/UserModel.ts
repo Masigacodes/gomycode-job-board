@@ -64,7 +64,7 @@ UserSchema.methods.comparePassword = async function (enteredPassword: string) {
 };
 
 // Create and export the User model
-export const UserModel: Model<IUser> = models.User || model<IUser>("User", UserSchema);
+export const UserModel: Model<IUser> = models?.User || model<IUser>("User", UserSchema);
 
 // Helper methods for CRUD operations and role management
 

@@ -13,6 +13,7 @@ type Job = {
 const JobList = () => {
   const [jobs, setJobs] = useState<Job[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     const fetchJobs = async () => {
@@ -25,6 +26,7 @@ const JobList = () => {
         setJobs(data);
       } catch (error) {
         console.error('Error fetching jobs:', error);
+        setError('Unable to load jobs. Please try again later.');
       } finally {
         setLoading(false);
       }
@@ -37,7 +39,13 @@ const JobList = () => {
     <div className="p-6 bg-gray-100 min-h-screen">
       <h1 className="text-3xl font-semibold text-center text-blue-600 mb-8">Job Listings</h1>
       {loading ? (
-        <p className="text-center text-gray-600">Loading jobs...</p>
+        <div className="text-center">
+          <p className="text-gray-600">Loading jobs...</p>
+          {/* Add a simple spinner */}
+          <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-blue-500 mx-auto mt-4"></div>
+        </div>
+      ) : error ? (
+        <p className="text-center text-red-600">{error}</p>
       ) : jobs.length === 0 ? (
         <p className="text-center text-gray-600">No jobs available at the moment.</p>
       ) : (
@@ -64,7 +72,7 @@ const JobList = () => {
               </div>
 
               {/* Button to navigate to the application form */}
-              <Link href={`/apply?jobId=${job.id}`} passHref>
+              <Link href={`/apply?jobId=${job.id}&jobTitle=${encodeURIComponent(job.title)}`} passHref>
                 <button className="mt-4 bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600 transition-all">
                   Apply Now
                 </button>

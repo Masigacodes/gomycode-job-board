@@ -11,6 +11,7 @@ const JobApplicationForm: React.FC = () => {
       : null;
 
   const [formData, setFormData] = useState({
+    job: jobId || null,
     fullName: "",
     email: "",
     phone: "",
@@ -23,37 +24,48 @@ const JobApplicationForm: React.FC = () => {
 
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
 
-  // Updated handleSubmit function
+  // Handle form submission
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    // Create a FormData object to handle file upload
-    const data = new FormData();
-    data.append("fullName", formData.fullName);
-    data.append("email", formData.email);
-    data.append("phone", formData.phone);
-    data.append("resume", formData.resume as File); // Add file
-    data.append("coverLetter", formData.coverLetter);
-    data.append("skills", JSON.stringify(formData.skills)); // Convert array to string
-    data.append("availability", formData.availability);
-    data.append("accessibilityRequirements", formData.accessibilityRequirements);
+    if (!jobId) {
+      setErrors({ jobId: "Job ID is required" });
+      return;
+    }
+
+    const formDataToSend = new FormData();
+    formDataToSend.append("job", jobId);
+    formDataToSend.append("fullName", formData.fullName);
+    formDataToSend.append("email", formData.email);
+    formDataToSend.append("phone", formData.phone);
+    formDataToSend.append("coverLetter", formData.coverLetter);
+    formDataToSend.append("availability", formData.availability);
+    formDataToSend.append(
+      "accessibilityRequirements",
+      formData.accessibilityRequirements
+    );
+    formData.skills.forEach((skill) => formDataToSend.append("skills", skill));
+    if (formData.resume) {
+      formDataToSend.append("resume", formData.resume);
+    }
 
     try {
-      const response = await fetch("/api/job/apply", {
+      const response = await fetch("/api/jobs/apply", {
         method: "POST",
-        body: data,
+        body: formDataToSend,
       });
 
       if (response.ok) {
         alert("Application submitted successfully!");
-        router.push("/thank-you"); // Redirect to a thank-you page
+        router.push("/"); // Redirect to home or a confirmation page
       } else {
         const errorData = await response.json();
-        alert(`Failed to submit application: ${errorData.message}`);
+        setErrors(errorData.errors || {});
+        alert("Failed to submit application. Please try again.");
       }
     } catch (error) {
       console.error("Error submitting application:", error);
-      alert("An unexpected error occurred. Please try again.");
+      alert("An unexpected error occurred. Please try again later.");
     }
   };
 
@@ -72,7 +84,8 @@ const JobApplicationForm: React.FC = () => {
       </h2>
 
       <p className="text-gray-700 text-center mb-6">
-        <span className="font-semibold text-blue-600">Job ID:</span> {jobId || "Not specified"}
+        <span className="font-semibold text-blue-600">Job ID:</span>{" "}
+        {jobId || "Not specified"}
       </p>
 
       <form onSubmit={handleSubmit} className="space-y-6">

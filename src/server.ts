@@ -4,7 +4,7 @@ import bodyParser from "body-parser";
 import multer from "multer";
 import cors from "cors";
 import dotenv from "dotenv";
-import Application from "./models/Application";
+import Application from "./models/ApplicationModel";
 
 dotenv.config();
 

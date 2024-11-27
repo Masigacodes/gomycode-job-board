@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { LogoutButton } from "../LogoutButton";
 
 const AdminLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   return (
@@ -36,9 +37,10 @@ const AdminLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
             <button className="px-4 py-2 text-sm text-white bg-blue-500 rounded hover:bg-blue-600">
               Notifications
             </button>
-            <button className="px-4 py-2 text-sm text-white bg-red-500 rounded hover:bg-red-600">
+            {/* <button className="px-4 py-2 text-sm text-white bg-red-500 rounded hover:bg-red-600">
               Logout
-            </button>
+            </button> */}
+            <LogoutButton />
           </div>
         </header>
 

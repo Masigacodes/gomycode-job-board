@@ -87,7 +87,7 @@ const authConfig = {
         if (account.provider === "google") {
           await dbConnect();
           // Check if the user already exists in the database
-          let existingUser = await UserModel.findOne({ email: user.email });
+          const existingUser = await UserModel.findOne({ email: user.email });
 
           if (existingUser) {
             // If the user exists, update their name and image if necessary

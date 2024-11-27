@@ -3,9 +3,9 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "concurrently \"next dev\" \"ts-node-dev backend/server.ts\"",
+    "dev": "concurrently \"next dev\"",
     "build": "next build && tsc",
-    "start": "next start && node dist/backend/server.js"
+    "start": "next start "
   },
   "dependencies": {
     "axios": "^1.7.7",

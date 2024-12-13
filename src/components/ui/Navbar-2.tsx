@@ -1,10 +1,30 @@
 "use client";
-import { useSession } from "next-auth/react";
+import { signIn, useSession } from "next-auth/react";
 import Link from "next/link";
 import { LogoutButton } from "../LogoutButton";
+import Login from "./Login";
 
 const Navbar = () => {
-  const session = useSession();
+  const { data: session, status } = useSession();
+
+  // Login handler
+  const handleLogin = async () => {
+    if (!Login) {
+      console.error("Login component is null");
+      return;
+    }
+
+    try {
+      // await Login();
+      await signIn()
+    } catch (error) {
+      console.error("Error during login:", error);
+    }
+    // Assuming your `Login` component contains a function to initiate Google login
+    // await Login();
+    await signIn()
+  };
+
   return (
     <nav className="bg-gradient-to-r from-blue-500 via-purple-500 to-blue-500 p-4 shadow-lg">
       <div className="container mx-auto flex justify-between items-center">
@@ -28,14 +48,15 @@ const Navbar = () => {
 
         {/* Authentication Buttons */}
         <div className="space-x-4">
-          {session.status === "authenticated" ? (
+          {status === "authenticated" ? (
             <LogoutButton />
           ) : (
-            <Link href="/login">
-              <button className="px-4 py-2 text-blue-500 bg-white font-semibold border border-blue-500 rounded-md hover:bg-blue-500 hover:text-white transition">
-                Login
-              </button>
-            </Link>
+            <button
+              onClick={handleLogin}
+              className="px-4 py-2 text-blue-500 bg-white font-semibold border border-blue-500 rounded-md hover:bg-blue-500 hover:text-white transition"
+            >
+              Login
+            </button>
           )}
           <Link href="/signup">
             <button className="px-4 py-2 bg-yellow-400 text-blue-900 font-semibold rounded-md hover:bg-yellow-500 hover:text-white transition">

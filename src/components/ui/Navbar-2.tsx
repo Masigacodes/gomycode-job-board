@@ -16,13 +16,13 @@ const Navbar = () => {
 
     try {
       // await Login();
-      await signIn()
+      await signIn();
     } catch (error) {
       console.error("Error during login:", error);
     }
     // Assuming your `Login` component contains a function to initiate Google login
     // await Login();
-    await signIn()
+    await signIn();
   };
 
   return (
@@ -51,18 +51,21 @@ const Navbar = () => {
           {status === "authenticated" ? (
             <LogoutButton />
           ) : (
-            <button
-              onClick={handleLogin}
-              className="px-4 py-2 text-blue-500 bg-white font-semibold border border-blue-500 rounded-md hover:bg-blue-500 hover:text-white transition"
-            >
-              Login
-            </button>
+            <>
+              <button
+                onClick={handleLogin}
+                className="px-4 py-2 text-blue-500 bg-white font-semibold border border-blue-500 rounded-md hover:bg-blue-500 hover:text-white transition"
+              >
+                Login
+              </button>
+
+              <Link href="/signup">
+                <button className="px-4 py-2 bg-yellow-400 text-blue-900 font-semibold rounded-md hover:bg-yellow-500 hover:text-white transition">
+                  Signup
+                </button>
+              </Link>
+            </>
           )}
-          <Link href="/signup">
-            <button className="px-4 py-2 bg-yellow-400 text-blue-900 font-semibold rounded-md hover:bg-yellow-500 hover:text-white transition">
-              Signup
-            </button>
-          </Link>
         </div>
       </div>
     </nav>

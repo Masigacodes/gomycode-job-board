@@ -1,48 +1,75 @@
+import { NextRequest, NextResponse } from "next/server";
+import multer from "multer";
+import { promises as fs } from "fs";
 import { dbConnect } from "@/lib/mongoose/db-connect";
 import ApplicationModel from "@/models/ApplicationModel";
-import { NextRequest, NextResponse } from "next/server";
 
-export async function GET(req: NextRequest) {
+// Initialize Multer storage for handling file uploads
+const BASE_URL = process.cwd();
+const uploadFolder = `${BASE_URL}/public/uploads/`;
+const upload = multer({ dest: uploadFolder });
+
+export const POST = async (req: NextRequest) => {
+  await dbConnect();
+
   try {
-    await dbConnect();
-    const fetchedJobApplications = await ApplicationModel.find({}).populate(
-      "job"
-    );
-    return NextResponse.json(fetchedJobApplications);
-  } catch (error: any) {
-    return NextResponse.json(
-      { message: "An error has occurred " + error.message },
-      { status: 500 }
-    );
-  }
-}
+    // Parse form data including files
+    const formData = await req.formData();
 
-export async function POST(req: NextRequest) {
-  try {
-    // Connect to the database
-    await dbConnect();
-
-    // Parse the request body to get the Job data
-  const {resume,...body} = await req.json();
-console.log({body})
-return NextResponse.json(body)
-    // Save the new Application to the database
-    const savedApplication = await ApplicationModel.insertMany(
-      Array.isArray(body) ? body : [body]
-    );
-    if (!savedApplication)
+    const resumeFile = formData.get("resume") as File;
+    if (!resumeFile) {
       return NextResponse.json(
-        { message: "error creating Application" },
-        { status: 500 }
+        { error: "Resume is required." },
+        { status: 400 }
       );
-    // Return the saved Application as a JSON response
-    return NextResponse.json(savedApplication, { status: 201 });
-  } catch (error: any) {
-    // Return an error message if something goes wrong
-    console.log("An error has occurred: " + error.message)
+    }
+
+    // Save the resume file
+    const resumePath = `${uploadFolder}${Date.now()}_${resumeFile.name
+      .split(" ")
+      .join("_")}`;
+    await fs.writeFile(resumePath, Buffer.from(await resumeFile.arrayBuffer()));
+
+    // Extract and save other fields
+    const applicationData = {
+      job: formData.get("job")?.toString() || "",
+      fullName: formData.get("fullName")?.toString() || "",
+
+      email: formData.get("email")?.toString() || "",
+      phone: formData.get("phone")?.toString() || "",
+      resume: resumePath,
+      coverLetter: formData.get("coverLetter")?.toString() || "",
+      // skills: formData.get("skills")?.toString() ? JSON.parse(formData.get("skills")!.toString()) : [],
+      skills: [],
+      availability: formData.get("availability")?.toString() || "",
+      accessibilityRequirements:
+        formData.get("accessibilityRequirements")?.toString() || "",
+    };
+
+    // Save to MongoDB
+    const application = new ApplicationModel(applicationData);
+    await application.save();
+
     return NextResponse.json(
-      { message: "An error has occurred: " + error.message },
+      { message: "Application submitted successfully." },
+      { status: 201 }
+    );
+  } catch (error: any) {
+    console.log("Error submitting application:", error.message);
+    return NextResponse.json(
+      { error: "Failed to submit application." },
       { status: 500 }
     );
   }
-}
+};
+
+export const GET = async (req: NextRequest) => {
+  // console.log({BASE_URL})
+  try {
+    await dbConnect();
+    const fetchedApplications = await ApplicationModel.find({});
+    return NextResponse.json(fetchedApplications);
+  } catch (error: any) {
+    return NextResponse.json({ error: error.message }, { status: 500 });
+  }
+};

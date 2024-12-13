@@ -1,180 +1,189 @@
+// app/apply/page.tsx
 "use client";
 
-import React from "react";
-import { useForm } from "react-hook-form";
 import { z } from "zod";
+import { useForm, SubmitHandler } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useState } from "react";
 import axios from "axios";
+import { useSearchParams } from "next/navigation";
 
-const jobApplicationSchema = z.object({
-  fullName: z.string().nonempty("Full Name is required"),
+// Define Zod schema
+const applicationSchema = z.object({
+  // job: z.string().min(1, "JobId  is required"),
+  fullName: z.string().min(1, "Full name is required"),
   email: z.string().email("Invalid email address"),
-  phone: z.string().nonempty("Phone number is required"),
+  phone: z.string().min(10, "Phone number must be at least 10 characters"),
+  resume: z
+    .instanceof(File)
+    .refine((file) => file.size > 0, "Resume is required"),
   coverLetter: z.string().optional(),
-  skills: z
-    .string()
-    .nonempty("Skills are required")
-    .transform((value) => value.split(",").map((skill) => skill.trim())),
-  availability: z.enum(["immediately", "1-2 weeks", "1 month"], {
-    errorMap: () => ({ message: "Select a valid availability option" }),
-  }),
+  skills: z.array(z.string()).optional(),
+  availability: z.string().optional(),
   accessibilityRequirements: z.string().optional(),
 });
 
-type JobApplicationFormValues = z.infer<typeof jobApplicationSchema>;
+type ApplicationFormInputs = z.infer<typeof applicationSchema>;
+const ApplicationForm = () => {
+  const searchParams = useSearchParams();
+  const jobId = searchParams.get("job"); // Retrieves the jobId parameter from the URL
 
-const JobApplicationForm: React.FC = () => {
+  const [loading, setLoading] = useState(false);
+  const [successMessage, setSuccessMessage] = useState("");
+
   const {
-    handleSubmit,
     register,
-    formState: { errors, isSubmitting },
-  } = useForm<JobApplicationFormValues>({
-    resolver: zodResolver(jobApplicationSchema),
+    handleSubmit,
+    formState: { errors },
+    reset,
+  } = useForm<ApplicationFormInputs>({
+    resolver: zodResolver(applicationSchema),
   });
 
-  const onSubmit = async (data: JobApplicationFormValues) => {
+  const onSubmit: SubmitHandler<ApplicationFormInputs> = async (data) => {
+    if (!jobId) {
+      console.error("Job ID is missing from the URL.");
+      return;
+    }
+
+    setLoading(true);
+    setSuccessMessage("");
+
     try {
-      const response = await axios.post("/api/jobs/apply", data);
-      if (response.status === 200) {
-        alert("Application submitted successfully!");
-      } else {
-        alert("Failed to submit application.");
+      const formData = new FormData();
+      formData.append("job", jobId);
+      formData.append("fullName", data.fullName);
+      formData.append("email", data.email);
+      formData.append("phone", data.phone);
+      formData.append("resume", data.resume);
+      if (data.coverLetter) formData.append("coverLetter", data.coverLetter);
+      if (data.skills) formData.append("skills", JSON.stringify(data.skills));
+      if (data.availability) formData.append("availability", data.availability);
+      if (data.accessibilityRequirements) {
+        formData.append(
+          "accessibilityRequirements",
+          data.accessibilityRequirements
+        );
       }
+
+      await axios.post("/api/jobs/apply", formData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      });
+
+      setSuccessMessage("Application submitted successfully!");
+      reset();
     } catch (error) {
-      console.error("Error submitting application:", error);
-      alert("Something went wrong. Please try again later.");
+      console.error("Failed to submit application:", error);
+    } finally {
+      setLoading(false);
     }
   };
-
   return (
-    <div className="bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 py-12">
-      <div className="max-w-4xl mx-auto bg-white p-8 rounded-xl shadow-xl">
-        <h2 className="text-3xl font-extrabold text-center text-indigo-800 mb-8">
-          Job Application Form
-        </h2>
-        <form onSubmit={handleSubmit(onSubmit)}>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-4">
-            <div>
-              <label htmlFor="fullName" className="block text-sm font-medium text-gray-700">
-                Full Name
-              </label>
-              <input
-                {...register("fullName")}
-                type="text"
-                id="fullName"
-                className="mt-2 w-full p-3 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500"
-              />
-              {errors.fullName && (
-                <p className="text-red-500 text-sm mt-2">{errors.fullName.message}</p>
-              )}
-            </div>
+    <div className="max-w-3xl mx-auto p-6 bg-white rounded shadow-md">
+      <h1 className="text-2xl font-bold mb-6">Job Application</h1>
 
-            <div>
-              <label htmlFor="email" className="block text-sm font-medium text-gray-700">
-                Email
-              </label>
-              <input
-                {...register("email")}
-                type="email"
-                id="email"
-                className="mt-2 w-full p-3 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500"
-              />
-              {errors.email && (
-                <p className="text-red-500 text-sm mt-2">{errors.email.message}</p>
-              )}
-            </div>
-          </div>
+      {successMessage && (
+        <p className="mb-4 text-green-600">{successMessage}</p>
+      )}
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-4">
-            <div>
-              <label htmlFor="phone" className="block text-sm font-medium text-gray-700">
-                Phone
-              </label>
-              <input
-                {...register("phone")}
-                type="tel"
-                id="phone"
-                className="mt-2 w-full p-3 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500"
-              />
-              {errors.phone && (
-                <p className="text-red-500 text-sm mt-2">{errors.phone.message}</p>
-              )}
-            </div>
+      <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+        <div>
+          <label className="block text-sm font-medium mb-1">Full Name</label>
+          <input
+            type="text"
+            className="w-full border p-2 rounded"
+            {...register("fullName")}
+          />
+          {errors.fullName && (
+            <p className="text-red-600 text-sm">{errors.fullName.message}</p>
+          )}
+        </div>
 
-            <div>
-              <label htmlFor="availability" className="block text-sm font-medium text-gray-700">
-                Availability
-              </label>
-              <select
-                {...register("availability")}
-                id="availability"
-                className="mt-2 w-full p-3 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500"
-              >
-                <option value="">Select Availability</option>
-                <option value="immediately">Immediately</option>
-                <option value="1-2 weeks">1-2 weeks</option>
-                <option value="1 month">1 month</option>
-              </select>
-              {errors.availability && (
-                <p className="text-red-500 text-sm mt-2">{errors.availability.message}</p>
-              )}
-            </div>
-          </div>
+        <div>
+          <label className="block text-sm font-medium mb-1">Email</label>
+          <input
+            type="email"
+            className="w-full border p-2 rounded"
+            {...register("email")}
+          />
+          {errors.email && (
+            <p className="text-red-600 text-sm">{errors.email.message}</p>
+          )}
+        </div>
 
-          <div className="mb-4">
-            <label htmlFor="coverLetter" className="block text-sm font-medium text-gray-700">
-              Cover Letter
-            </label>
-            <textarea
-              {...register("coverLetter")}
-              id="coverLetter"
-              rows={4}
-              className="mt-2 w-full p-3 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500"
-            />
-          </div>
+        <div>
+          <label className="block text-sm font-medium mb-1">Phone</label>
+          <input
+            type="text"
+            className="w-full border p-2 rounded"
+            {...register("phone")}
+          />
+          {errors.phone && (
+            <p className="text-red-600 text-sm">{errors.phone.message}</p>
+          )}
+        </div>
 
-          <div className="mb-4">
-            <label htmlFor="skills" className="block text-sm font-medium text-gray-700">
-              Skills
-            </label>
-            <input
-              {...register("skills")}
-              type="text"
-              id="skills"
-              placeholder="Enter skills separated by commas"
-              className="mt-2 w-full p-3 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500"
-            />
-            {errors.skills && (
-              <p className="text-red-500 text-sm mt-2">{errors.skills.message}</p>
-            )}
-          </div>
+        <div>
+          <label className="block text-sm font-medium mb-1">Resume</label>
+          <input
+            type="file"
+            className="w-full border p-2 rounded"
+            {...register("resume")}
+          />
+          {errors.resume && (
+            <p className="text-red-600 text-sm">{errors.resume.message}</p>
+          )}
+        </div>
 
-          <div className="mb-4">
-            <label
-              htmlFor="accessibilityRequirements"
-              className="block text-sm font-medium text-gray-700"
-            >
-              Accessibility Requirements
-            </label>
-            <textarea
-              {...register("accessibilityRequirements")}
-              id="accessibilityRequirements"
-              rows={3}
-              className="mt-2 w-full p-3 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500"
-            />
-          </div>
+        <div>
+          <label className="block text-sm font-medium mb-1">Cover Letter</label>
+          <textarea
+            className="w-full border p-2 rounded"
+            {...register("coverLetter")}
+          />
+        </div>
 
-          <button
-            type="submit"
-            className="w-full bg-indigo-600 text-white py-3 px-6 rounded-md hover:bg-indigo-700 focus:ring focus:ring-indigo-500 focus:ring-opacity-50"
-            disabled={isSubmitting}
-          >
-            {isSubmitting ? "Submitting..." : "Submit Application"}
-          </button>
-        </form>
-      </div>
+        <div>
+          <label className="block text-sm font-medium mb-1">Skills</label>
+          <input
+            type="text"
+            className="w-full border p-2 rounded"
+            placeholder="Comma-separated skills (e.g., React, TypeScript)"
+            {...register("skills")}
+          />
+        </div>
+
+        <div>
+          <label className="block text-sm font-medium mb-1">Availability</label>
+          <input
+            type="text"
+            className="w-full border p-2 rounded"
+            {...register("availability")}
+          />
+        </div>
+
+        <div>
+          <label className="block text-sm font-medium mb-1">
+            Accessibility Requirements
+          </label>
+          <textarea
+            className="w-full border p-2 rounded"
+            {...register("accessibilityRequirements")}
+          />
+        </div>
+
+        <button
+          type="submit"
+          className="w-full bg-blue-500 text-white p-2 rounded mt-4"
+          disabled={loading}
+        >
+          {loading ? "Submitting..." : "Submit Application"}
+        </button>
+      </form>
     </div>
   );
 };
 
-export default JobApplicationForm;
+export default ApplicationForm;

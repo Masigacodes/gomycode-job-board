@@ -9,6 +9,9 @@ export interface IJob extends Document {
   jobType?: string;
   disabilityFriendly?: boolean;
   description: string;
+  requirements?: string;
+  attachments?: string;
+  salary?: string;
   createdAt?: Date;
   updatedAt?: Date;
 }
@@ -42,6 +45,17 @@ const JobSchema: Schema<IJob> = new Schema(
     description: {
       type: String,
       required: true,
+    },
+    salary: {
+      type: String,
+      required: true,
+    },
+    requirements: {
+      type: String,
+      required: true,
+    },
+    attachments: {
+      type: String,
     },
   },
   {

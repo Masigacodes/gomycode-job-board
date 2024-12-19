@@ -1,15 +1,21 @@
 "use client";
 
-import { useRouter } from "next/navigation";
-import React, { useState } from "react";
+import { useParams, useRouter, useSearchParams } from "next/navigation";
+import React, { useEffect, useState } from "react";
 
 const JobApplicationForm: React.FC = () => {
   const router = useRouter();
-  const jobId =
-    typeof window !== "undefined"
-      ? new URLSearchParams(window.location.search).get("jobId")
-      : null;
+  const params = useSearchParams();
+  const [jobId, setJobId] = useState<string | null>(null);
 
+  useEffect(() => {
+    console.log({ params });
+    setJobId(params.get("jobId")); // Set the jobId from the URL params.get("jobId");
+    console.log({ jobId });
+    if (!jobId) {
+      router.push("/jobs"); // Redirect to home if jobId is not provided
+    }
+  }, [jobId, router]);
   const [formData, setFormData] = useState({
     job: jobId || null,
     fullName: "",

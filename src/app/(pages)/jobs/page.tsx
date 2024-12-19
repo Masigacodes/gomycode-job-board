@@ -139,10 +139,12 @@ function JobsForDisabledPeople() {
               key={job._id as string}
               className="p-6 border border-transparent rounded-lg shadow-lg hover:shadow-2xl transition-shadow bg-black bg-opacity-50 backdrop-blur-lg"
             >
-              <Link href={`/jobs/${job._id}`}>
+              
                 <div>
                   <h2 className="text-2xl font-bold text-blue-200 mb-3 hover:underline">
+                  <Link href={`/jobs/${job._id}`}>
                     {job.title}
+                  </Link>
                   </h2>
                   <p className="text-gray-200">
                     <span className="font-semibold">Company:</span> {(job.company as ICompany).name}
@@ -157,8 +159,11 @@ function JobsForDisabledPeople() {
                     <span className="font-semibold">Disability Friendly:</span>{' '}
                     {job.disabilityFriendly ? 'Yes' : 'No'}
                   </p>
+                  <Link href={`/apply/?jobId=${job._id}`}>
+                    <button className="text-blue-400 hover:underline px-8 py-3 rounded-md">Apply Here</button>
+                  </Link>
                 </div>
-              </Link>
+              
             </li>
           ))}
         </ul>
